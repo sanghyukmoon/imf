@@ -214,7 +214,7 @@ class ChabrierLogNormal(MassFunction):
                  leading_constant=0.086):
         super().__init__(mmin=mmin, mmax=mmax)
 
-        self.multiplier = leading_constant
+        self.multiplier = leading_constant*np.sqrt(2*np.pi)*lognormal_width
         self.lognormal_width = lognormal_width
 
         self.distr = distributions.TruncatedLogNormal(mu=lognormal_center,
