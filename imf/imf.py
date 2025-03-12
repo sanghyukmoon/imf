@@ -210,7 +210,7 @@ class ChabrierLogNormal(MassFunction):
 
     def __init__(self, mmin=default_mmin, mmax=default_mmax,
                  lognormal_center=0.22,
-                 lognormal_width=0.57*np.log(10),
+                 lognormal_width=0.57,
                  leading_constant=0.086):
         super().__init__(mmin=mmin, mmax=mmax)
 
@@ -218,7 +218,7 @@ class ChabrierLogNormal(MassFunction):
         self.lognormal_width = lognormal_width
 
         self.distr = distributions.TruncatedLogNormal(mu=lognormal_center,
-                                                      sig=self.lognormal_width,
+                                                      sig=lognormal_width*np.log(10),
                                                       m1=self.mmin,
                                                       m2=self.mmax)
 
@@ -235,7 +235,7 @@ class ChabrierPowerLaw(MassFunction):
 
     def __init__(self,
                  lognormal_center=0.22,
-                 lognormal_width=0.57*np.log(10),
+                 lognormal_width=0.57,
                  mmin=default_mmin,
                  mmax=default_mmax,
                  alpha=2.3,
@@ -279,10 +279,10 @@ class ChabrierPowerLaw(MassFunction):
         self._lognormal_width = lognormal_width
         self._lognormal_center = lognormal_center
         self.distr = distributions.CompositeDistribution([
-            distributions.TruncatedLogNormal(self._lognormal_center,
-                                             self._lognormal_width,
-                                             self.mmin,
-                                             self._mmid),
+            distributions.TruncatedLogNormal(mu=lognormal_center,
+                                             sig=lognormal_width*np.log(10),
+                                             m1=self.mmin,
+                                             m2=self._mmid),
             distributions.PowerLaw(-self._alpha, self._mmid, self.mmax)
         ])
 
