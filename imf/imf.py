@@ -199,8 +199,8 @@ class ChabrierLogNormal(MassFunction):
 
     Parameters
     ----------
-    lognormal_center : float
-    lognormal_width : float
+    center : float
+    width : float
     mmin : float
     mmax : float
     leading_constant : float
@@ -209,16 +209,16 @@ class ChabrierLogNormal(MassFunction):
     default_mmax = np.inf
 
     def __init__(self, mmin=default_mmin, mmax=default_mmax,
-                 lognormal_center=0.22,
-                 lognormal_width=0.57,
+                 center=0.22,
+                 width=0.57,
                  leading_constant=0.086):
         super().__init__(mmin=mmin, mmax=mmax)
 
-        self.multiplier = leading_constant*np.sqrt(2*np.pi)*lognormal_width
-        self.lognormal_width = lognormal_width
+        self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
+        self.width = width
 
-        self.distr = distributions.TruncatedLogNormal(mu=lognormal_center,
-                                                      sig=lognormal_width*np.log(10),
+        self.distr = distributions.TruncatedLogNormal(mu=center,
+                                                      sig=width*np.log(10),
                                                       m1=self.mmin,
                                                       m2=self.mmax)
 
@@ -234,8 +234,8 @@ class ChabrierPowerLaw(MassFunction):
     default_mmax = np.inf
 
     def __init__(self,
-                 lognormal_center=0.22,
-                 lognormal_width=0.57,
+                 center=0.22,
+                 width=0.57,
                  mmin=default_mmin,
                  mmax=default_mmax,
                  alpha=2.3,
@@ -247,8 +247,8 @@ class ChabrierPowerLaw(MassFunction):
 
         Parameters
         ----------
-        lognormal_center : float
-        lognormal_width : float
+        center : float
+        width : float
             The lognormal width.  Scipy.stats.lognorm uses log_n,
             so we need to scale this b/c Chabrier uses log_10
         mmin : float
@@ -272,17 +272,17 @@ class ChabrierPowerLaw(MassFunction):
         # importantly the lognormal center is the exp(M) where M is the mean of ln(mass)
         # normal distribution
         super().__init__(mmin=mmin, mmax=mmax)
-        self.multiplier = leading_constant*np.sqrt(2*np.pi)*lognormal_width
+        self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
         self._mmid = mmid
         if self.mmax <= self._mmid:
             raise ValueError("The Chabrier Mass Function does not support "
                              "mmax <= mmid")
         self._alpha = alpha
-        self._lognormal_width = lognormal_width
-        self._lognormal_center = lognormal_center
+        self._width = width
+        self._center = center
         self.distr = distributions.CompositeDistribution([
-            distributions.TruncatedLogNormal(mu=lognormal_center,
-                                             sig=lognormal_width*np.log(10),
+            distributions.TruncatedLogNormal(mu=center,
+                                             sig=width*np.log(10),
                                              m1=self.mmin,
                                              m2=self._mmid),
             distributions.PowerLaw(-self._alpha, self._mmid, self.mmax)
