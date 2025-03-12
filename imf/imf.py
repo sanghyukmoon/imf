@@ -239,7 +239,8 @@ class ChabrierPowerLaw(MassFunction):
                  mmin=default_mmin,
                  mmax=default_mmax,
                  alpha=2.3,
-                 mmid=1):
+                 mmid=1,
+                 leading_constant=0.086):
         """
         From Equation 18 of Chabrier 2003
         https://ui.adsabs.harvard.edu/abs/2003PASP..115..763C/abstract
@@ -271,6 +272,7 @@ class ChabrierPowerLaw(MassFunction):
         # importantly the lognormal center is the exp(M) where M is the mean of ln(mass)
         # normal distribution
         super().__init__(mmin=mmin, mmax=mmax)
+        self.multiplier = leading_constant*np.sqrt(2*np.pi)*lognormal_width
         self._mmid = mmid
         if self.mmax <= self._mmid:
             raise ValueError("The Chabrier Mass Function does not support "
@@ -288,9 +290,9 @@ class ChabrierPowerLaw(MassFunction):
 
     def __call__(self, x, integral_form=False, **kw):
         if integral_form:
-            return self.distr.cdf(x)
+            return self.distr.cdf(x) * self.multiplier
         else:
-            return self.distr.pdf(x)
+            return self.distr.pdf(x) * self.multiplier
 
 
 
