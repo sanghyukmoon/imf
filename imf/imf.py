@@ -214,7 +214,10 @@ class ChabrierLogNormal(MassFunction):
                  leading_constant=0.086):
         super().__init__(mmin=mmin, mmax=mmax)
 
-        self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
+        if leading_constant is None:
+            self.multiplier = 1
+        else:
+            self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
         self.width = width
 
         self.distr = distributions.TruncatedLogNormal(mu=center,
@@ -272,7 +275,10 @@ class ChabrierPowerLaw(MassFunction):
         # importantly the lognormal center is the exp(M) where M is the mean of ln(mass)
         # normal distribution
         super().__init__(mmin=mmin, mmax=mmax)
-        self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
+        if leading_constant is None:
+            self.multiplier = 1
+        else:
+            self.multiplier = leading_constant*np.sqrt(2*np.pi)*width
         self._mmid = mmid
         if self.mmax <= self._mmid:
             raise ValueError("The Chabrier Mass Function does not support "
